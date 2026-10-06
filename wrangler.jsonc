@@ -1,20 +1,14 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "WORKER-NAME",
-  "main": "src/index.ts",
+  "name": "minilojazap",
+  "main": "index.js",
   "compatibility_date": "2025-02-04",
   "observability": {
     "enabled": true
   },
-
-  // Add this to your wrangler.jsonc
   "kv_namespaces": [
     {
-      "binding": "KV",
-      "id": "5e018cbd3c62424ba1b648a31f34d5dc",
-      
-      // Optional: preview_id used when running `wrangler dev` for local dev
-      "preview_id": "MiniLojaZap"
+      "binding": "LOJAS",
+      "id": "5e018cbd3c62424ba1b648a31f34d5dc"
     }
   ]
 }
