@@ -1,4 +1,4 @@
-// Miniloja Relâmpago — servidor (Cloudflare Worker)
+// MiniLojaZap — servidor (Cloudflare Worker)
 // Rotas: POST /api/comprar • GET /api/licenca • POST /api/publicar • GET /api/loja/:slug
 // Segredos (Cloudflare): MP_ACCESS_TOKEN, LIC_PRIVATE_JWK • Opcional: PRECO (padrão 97) • KV: LOJAS
 
