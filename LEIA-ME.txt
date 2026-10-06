@@ -1,42 +1,20 @@
-MINILOJA RELÂMPAGO — VERSÃO COM SERVIDOR
-=========================================
-O que esta versão faz
-- Cada loja ganha um link fixo: seusite.com/nome-da-loja (com fotos).
-- O cliente paga no Mercado Pago e o criador libera sozinho, sem você enviar código.
-- O gerador-codigos.html continua funcionando (os códigos antigos e novos são aceitos).
+# MiniLojaZap — Versão Melhorada
 
-PASSO A PASSO (os nomes dos menus podem variar um pouco)
+## Segredos necessários
 
-1) GITHUB
-   Crie um repositório (ex.: "miniloja") e envie TUDO desta pasta:
-   src/, public/, wrangler.jsonc e este arquivo.
-   NÃO envie o arquivo SEGREDO_LIC_PRIVATE_JWK.txt para o GitHub.
+### minilojazap
+- `MP_ACCESS_TOKEN` — Access Token do Mercado Pago
+- `LIC_PRIVATE_JWK` — Chave privada ECDSA P-256 (JSON)
+- `PRECO` (opcional) — Valor da licença (padrão: 19)
 
-2) CLOUDFLARE — criar o armazenamento
-   Painel Cloudflare > Storage & Databases > KV > Create.
-   Nome: miniloja-lojas. Copie o "ID" do namespace.
-   No GitHub, abra wrangler.jsonc e troque COLE_AQUI_O_ID_DO_KV por esse ID.
+### gerador-codigos
+- `LIC_PRIVATE_JWK` — Mesma chave privada do minilojazap
+- `GEN_PASSWORD` — Senha de acesso ao gerador
 
-3) CLOUDFLARE — publicar
-   Workers & Pages > Create > Import a repository > escolha o repositório > Deploy.
-
-4) CLOUDFLARE — segredos
-   Abra o Worker "miniloja" > Settings > Variables and Secrets > Add (tipo Secret):
-   - LIC_PRIVATE_JWK  = todo o texto do arquivo SEGREDO_LIC_PRIVATE_JWK.txt
-   - MP_ACCESS_TOKEN  = Access Token de PRODUÇÃO do Mercado Pago
-                        (Mercado Pago > Suas integrações > criar aplicação > Credenciais de produção)
-   - PRECO (opcional) = valor da licença, só números (padrão 19)
-
-5) TESTE
-   Abra o endereço do Worker, clique em "Pagar com Mercado Pago", pague e volte ao app.
-   Dica: o valor padrão já é 19. Se quiser testar com outro valor, defina PRECO e depois apague a variável.
-   Depois crie uma loja e clique em PUBLICAR: o link fixo aparece.
-
-6) DOMÍNIO PRÓPRIO (opcional)
-   Worker > Settings > Domains & Routes > Add custom domain.
-
-OBSERVAÇÕES
-- O PIX pode levar alguns instantes: se o app avisar "pagamento ainda não confirmado",
-  é só tocar em "Verificar pagamento de novo".
-- Se um cliente pagar e não conseguir liberar, gere o código no gerador e envie a ele.
-- Guarde o SEGREDO_LIC_PRIVATE_JWK.txt em local seguro. Ele é a chave que cria as licenças.
+## Deploy
+\`\`\`bash
+cd minilojazap && npx wrangler deploy
+cd gerador-codigos && npx wrangler deploy
+npx wrangler secret put LIC_PRIVATE_JWK
+npx wrangler secret put GEN_PASSWORD
+\`\`\`
