@@ -1,15 +1,14 @@
 {
-  "name": "miniloja",
-  "main": "src/index.js",
-  "compatibility_date": "2026-09-01",
-  "assets": {
-    "directory": "./public",
-    "binding": "ASSETS",
-    "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "WORKER-NAME",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-02-04",
+  "observability": {
+    "enabled": true
   },
+
+  // Add this to your wrangler.jsonc
   "kv_namespaces": [
-    { "binding": "LOJAS", "id": "  "kv_namespaces": [
     {
       "binding": "KV",
       "id": "5e018cbd3c62424ba1b648a31f34d5dc",
@@ -17,6 +16,5 @@
       // Optional: preview_id used when running `wrangler dev` for local dev
       "preview_id": "<ID_OF_PREVIEW_KV_NAMESPACE_FOR_LOCAL_DEVELOPMENT>"
     }
-  ]" }
   ]
 }
