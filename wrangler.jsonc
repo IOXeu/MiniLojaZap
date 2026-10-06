@@ -14,7 +14,7 @@
       "id": "5e018cbd3c62424ba1b648a31f34d5dc",
       
       // Optional: preview_id used when running `wrangler dev` for local dev
-      "preview_id": "<ID_OF_PREVIEW_KV_NAMESPACE_FOR_LOCAL_DEVELOPMENT>"
+      "preview_id": "MiniLojaZap"
     }
   ]
 }
