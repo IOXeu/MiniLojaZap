@@ -4,5 +4,11 @@
   "compatibility_date": "2025-02-04",
   "observability": {
     "enabled": true
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "LOJAS",
+      "id": "5e018cbd3c62424ba1b648a31f34d5dc"
+    }
+  ]
 }
