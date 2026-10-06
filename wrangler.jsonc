@@ -9,6 +9,14 @@
     "run_worker_first": ["/api/*"]
   },
   "kv_namespaces": [
-    { "binding": "LOJAS", "id": "COLE_AQUI_O_ID_DO_KV" }
+    { "binding": "LOJAS", "id": "  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "5e018cbd3c62424ba1b648a31f34d5dc",
+      
+      // Optional: preview_id used when running `wrangler dev` for local dev
+      "preview_id": "<ID_OF_PREVIEW_KV_NAMESPACE_FOR_LOCAL_DEVELOPMENT>"
+    }
+  ]" }
   ]
 }
