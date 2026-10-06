@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miniloja Relâmpago</title>
+<style>
+:root{--bg:#0a0a0b;--pn:#18181b;--in:#09090b;--ln:rgba(255,255,255,.1);--mu:#a1a1aa;--ok:#34d399}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+[hidden]{display:none!important}
+body{background:var(--bg);color:#f4f4f5}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0}
+.w{max-width:1200px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:9;background:rgba(10,10,11,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+header .w{height:56px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:10px;align-items:center;font-size:12px;font-weight:800;letter-spacing:.14em}
+.brand i{width:28px;height:28px;border-radius:50%;background:var(--ok);color:#000;display:grid;place-items:center;font-style:normal;font-size:11px}
+nav{display:flex;gap:8px}
+.tab{height:32px;padding:0 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--ln);font-size:11px;font-weight:800;letter-spacing:.05em;color:rgba(255,255,255,.7)}
+.tab.on{background:#fff;color:#000}
+main{padding:28px 0 48px}
+.two{display:grid;gap:28px}
+@media(min-width:960px){.two{grid-template-columns:1fr 400px}.stk{position:sticky;top:76px;align-self:start}}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.1em;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);color:#6ee7b7}
+h1{font-size:clamp(30px,6vw,50px);line-height:1.02;letter-spacing:-.03em;font-weight:900;margin-top:18px}
+h1 em{color:var(--ok);font-style:normal}
+h2{font-size:clamp(22px,4vw,28px);font-weight:900}
+.lead{margin-top:16px;color:var(--mu);font-size:16px;line-height:1.6;max-width:560px}
+.sub{margin-top:6px;color:var(--mu);font-size:13px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:18px;padding:20px;margin-top:16px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px;max-width:560px}
+.facts div{border:1px solid var(--ln);border-radius:14px;padding:12px;background:rgba(255,255,255,.03);font-size:11px;color:var(--mu)}
+.facts b{display:block;font-size:13px;color:#fff}
+.btn{height:46px;padding:0 22px;border-radius:999px;font-weight:900;font-size:13px;letter-spacing:.03em}
+.btn:active{transform:scale(.98)}
+.sm{height:38px;padding:0 16px;font-size:12px}
+.ok{background:var(--ok);color:#000}.wh{background:#fff;color:#000}
+.gh{background:rgba(255,255,255,.05);border:1px solid var(--ln);font-weight:700}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.price{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.price s{color:#71717a;font-size:14px}.price b{font-size:26px;font-weight:900;margin-left:8px}
+.key{background:#000;border:1px solid var(--ln);border-radius:10px;padding:10px 12px;font-size:13px;word-break:break-all;margin:6px 0 12px}
+.lbl{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--mu)}
+.feat{display:grid;gap:14px;margin-top:36px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.feat div{border:1px solid var(--ln);border-radius:18px;padding:20px;background:rgba(255,255,255,.03);color:var(--mu);font-size:13px;line-height:1.6}
+.feat b{display:block;color:#fff;font-size:15px;margin-bottom:6px}
+.step{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:13px;font-weight:900;letter-spacing:.06em}
+.step i{width:28px;height:28px;border-radius:50%;background:#fff;color:#000;display:grid;place-items:center;font-style:normal;font-size:12px}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tm{text-align:left;background:var(--in);border:1px solid var(--ln);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center}
+.tm.on{border-color:rgba(52,211,153,.6);box-shadow:0 0 0 3px rgba(52,211,153,.15)}
+.tm i{width:30px;height:30px;border-radius:50%;flex:none;border:1px solid var(--ln)}
+.tm b{display:block;font-size:12px}.tm span{font-size:10px;color:var(--mu)}
+.fl{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:640px){.fl{grid-template-columns:1fr 1fr}.fl .full{grid-column:1/-1}}
+label{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--mu)}
+input{width:100%;height:44px;margin-top:6px;background:var(--in);border:1px solid var(--ln);border-radius:12px;padding:0 14px;font-size:13px;outline:0}
+input:focus{border-color:rgba(52,211,153,.55)}
+.pb{background:var(--in);border:1px solid var(--ln);border-radius:14px;padding:14px;margin-top:12px;display:grid;gap:10px}
+.pb input{margin-top:0;background:var(--pn)}
+.ph{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fo{display:flex;gap:10px;align-items:center}
+.pi{width:48px;height:48px;border-radius:10px;border:1px solid var(--ln);background:#000;display:grid;place-items:center;overflow:hidden;flex:none}
+.pi img{width:100%;height:100%;object-fit:cover}
+.x{background:none;color:#f87171;font-size:11px;font-weight:700}
+#out{border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.06);border-radius:18px;padding:20px;margin-top:16px}
+.note{margin-top:12px;font-size:11px;line-height:1.6;color:var(--mu)}
+.foot{margin-top:36px;text-align:center;font-size:10px;letter-spacing:.18em;color:#71717a}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:999px;font-size:12px;font-weight:800;z-index:99}
+</style>
+</head>
+<body>
+
+<header><div class="w">
+  <div class="brand"><i>M</i>MINILOJA RELÂMPAGO</div>
+  <nav>
+    <button class="tab on" data-go="home">INÍCIO</button>
+    <button class="tab" data-go="creator">CRIADOR</button>
+  </nav>
+</div></header>
+
+<main class="w">
+
+  <!-- ===== INÍCIO ===== -->
+  <section id="home">
+    <div class="two">
+      <div>
+        <span class="pill">SEM SITE CARO • SEM CARRINHO • SEM CADASTRO</span>
+        <h1>Transforme seu <em>WhatsApp</em> em uma vitrine de vendas em <em>60 segundos</em></h1>
+        <p class="lead">O cliente chama você no WhatsApp com 1 clique, já com a mensagem do produto pronta. Escolha entre 6 molduras, preencha os dados e divulgue o link no TikTok, no Instagram ou no status do WhatsApp.</p>
+        <div class="facts">
+          <div><b>1 clique</b>pro Zap</div>
+          <div><b>Oferta</b>relâmpago</div>
+          <div><b>6 molduras</b>premium</div>
+        </div>
+        <div class="card price">
+          <div>
+            <s>De R$297</s><b>R$19 <small style="font-size:13px;color:#6ee7b7">vitalício</small></b>
+            <div class="sub">PIX direto • sem mensalidade</div>
+          </div>
+          <button class="btn ok" data-go="creator">DESBLOQUEAR O CRIADOR →</button>
+        </div>
+        <div class="card">
+          <b style="font-size:14px">Pagamento via PIX</b>
+          <div class="lbl" style="margin-top:14px">CHAVE PIX</div>
+          <div class="key mono" id="pix"></div>
+          <div class="row">
+            <a class="btn ok sm" id="mp" target="_blank" rel="noopener noreferrer" style="display:grid;place-items:center;text-decoration:none">Pagar com Mercado Pago</a>
+            <button class="btn wh sm" id="cpix">Copiar chave PIX</button>
+            <button class="btn gh sm" data-go="creator">Já paguei, inserir meu código</button>
+          </div>
+        </div>
+      </div>
+      <div class="stk">
+        <div class="lbl" style="margin-bottom:10px">DEMONSTRAÇÃO</div>
+        <div id="demo"></div>
+      </div>
+    </div>
+    <div class="feat">
+      <div><b>⚡ 1 clique pro Zap</b>O cliente não preenche nada: um botão abre o WhatsApp com a mensagem do produto pronta.</div>
+      <div><b>🔥 Oferta relâmpago</b>Selo AO VIVO, aviso de oferta editável e desconto calculado automaticamente.</div>
+      <div><b>🎨 6 molduras</b>Emerald, Violet, Amber, Ice, Rose e Midnight. Troque o visual com 1 clique e veja ao vivo.</div>
+    </div>
+  </section>
+
+  <!-- ===== BLOQUEIO (licença) ===== -->
+  <section id="lock" hidden>
+    <div style="max-width:520px;margin:0 auto">
+      <span class="pill">LICENÇA VITALÍCIA</span>
+      <h2 style="margin-top:14px">Desbloqueie o criador</h2>
+      <p class="sub">Depois do pagamento você recebe um código por WhatsApp ou e-mail. Cole abaixo: o acesso fica liberado neste aparelho para sempre.</p>
+      <div class="card">
+        <label>SEU CÓDIGO DE ACESSO<input id="code" placeholder="ML1.…" autocomplete="off" spellcheck="false"></label>
+        <div class="row" style="margin-top:14px">
+          <button class="btn ok" id="unlock">DESBLOQUEAR</button>
+          <button class="btn gh" data-go="home">Voltar</button>
+        </div>
+        <p class="note" id="lockmsg"></p>
+        <button class="btn wh sm" id="recheck" hidden style="margin-top:10px">Verificar pagamento de novo</button>
+      </div>
+      <div class="card" style="font-size:12px;line-height:1.8;color:var(--mu)">
+        <b style="color:#fff">Ainda não tem o código?</b><br>
+        1. Pague pelo Mercado Pago ou pela chave PIX.<br>
+        2. Envie o comprovante <span id="contato"></span>.<br>
+        3. Você recebe o código e cola aqui.
+        <div class="row" style="margin-top:12px">
+          <a class="btn ok sm" id="mp2" target="_blank" rel="noopener noreferrer" style="display:grid;place-items:center;text-decoration:none">Pagar com Mercado Pago</a>
+          <button class="btn gh sm" id="cpix2">Copiar chave PIX</button>
+          <a class="btn wh sm" id="zaplink" hidden target="_blank" rel="noopener noreferrer" style="display:grid;place-items:center;text-decoration:none">Enviar comprovante no WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CRIADOR ===== -->
+  <section id="creator" hidden>
+    <div class="two">
+      <div>
+        <h2>Crie sua miniloja em 60 segundos</h2>
+        <p class="sub">Tudo roda no seu navegador e fica salvo neste aparelho. Nada é enviado a servidor.</p>
+        <p class="sub" id="licinfo" style="color:#6ee7b7"></p>
+
+        <div class="card">
+          <div class="step"><i>1</i>ESCOLHA SUA MOLDURA</div>
+          <div class="themes" id="themes"></div>
+        </div>
+
+        <div class="card">
+          <div class="step"><i>2</i>DADOS DA LOJA</div>
+          <div class="fl" id="fields">
+            <label>NOME DA LOJA<input data-f="nome" placeholder="HDMICRO LOJA"></label>
+            <label>SLOGAN<input data-f="slogan" placeholder="Ofertas Relâmpago Rio Preto"></label>
+            <label>WHATSAPP COM DDD (só números)<input data-f="whatsapp" id="f-whatsapp" inputmode="numeric" placeholder="17999999999"></label>
+            <label>INSTAGRAM (sem @)<input data-f="insta" placeholder="hdmicro.loja"></label>
+            <label>TIKTOK (sem @)<input data-f="tiktok" placeholder="hdmicro.loja"></label>
+            <label>CIDADE<input data-f="cidade" placeholder="São José do Rio Preto"></label>
+            <label class="full">AVISO DE OFERTA (deixe vazio para ocultar)<input data-f="aviso" placeholder="Oferta relâmpago • consulte a disponibilidade"></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="step"><i>3</i>PRODUTOS (até 6)</div>
+          <div id="prods"></div>
+          <button class="btn gh sm" id="add" style="margin-top:12px">+ Adicionar produto</button>
+        </div>
+
+        <div class="row" style="margin-top:18px">
+          <button class="btn ok" id="gen" style="flex:1;min-width:220px;height:52px">GERAR MINHA MINILOJA ⚡</button>
+          <button class="btn gh" id="reset" style="height:52px">Resetar</button>
+        </div>
+
+        <div id="out" hidden>
+          <div class="lbl" style="color:#6ee7b7">SUA MINILOJA FOI GERADA</div>
+          <div class="key mono" id="lnk"></div>
+          <div class="row">
+            <button class="btn wh sm" id="cp">Copiar link</button>
+            <button class="btn gh sm" id="dl">Baixar HTML</button>
+          </div>
+          <p class="note" id="note"></p>
+        </div>
+      </div>
+
+      <div class="stk">
+        <div class="lbl" style="margin-bottom:10px">PREVIEW AO VIVO • <span id="pvname"></span></div>
+        <div id="pv"></div>
+        <div class="card" style="padding:14px;font-size:11px;line-height:1.6;color:var(--mu)">
+          <b style="color:#fff">Dica:</b> escreva a mensagem pronta de cada produto com o preço, assim o cliente já chega no WhatsApp pronto para fechar.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">HDMICRO LOJA • MINILOJA RELÂMPAGO • FEITO PARA VENDER NO ZAP</p>
+</main>
+<div id="toast" hidden></div>
+
+<script>
+(()=>{
+"use strict";
+
+/* ===== CONFIGURAÇÃO (edite aqui) ===== */
+const CFG={
+  servidor:true,  // true = publica as lojas no servidor e libera o criador sozinho após o pagamento
+  pix:"5517992644042",
+  pagar:"https://mpago.la/2oJvLu7",  // link de pagamento do Mercado Pago (deixe vazio para ocultar o botão)
+  zap:"",   // seu WhatsApp com DDD, só números (ex.: 17999999999) — aparece no botão de comprovante
+  email:""  // seu e-mail de suporte (opcional)
+};
+const SERVER=CFG.servidor&&/^https?:$/.test(location.protocol);
+const MAX=6;
+
+/* ===== UTILITÁRIOS ===== */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const digits=s=>String(s||"").replace(/\D/g,"");
+const slug=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,30)||"minha-loja";
+const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const dec=s=>JSON.parse(decodeURIComponent(escape(atob(s))));
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* ===== MOLDURAS ===== */
+const K="bg bg2 tx mu card bd bb bt g1 g2 zap zt ig pr de rg".split(" ");
+const THEMES=[
+["emerald","Emerald Noite","Mais vendido","#0a0a0b","#101412","#fafafa","#a1a1aa","#151517","rgba(52,211,153,0.30)","rgba(52,211,153,0.15)","#34d399","#10b981","#06b6d4","#25D366","#0a0a0b","linear-gradient(135deg,#8b5cf6,#d946ef)","#34d399","#71717a","rgba(52,211,153,0.4)"],
+["violet","Violet Neon","Neon","#0f0a1a","#181022","#f5f3ff","#a78bfa","#1c132d","rgba(167,139,250,0.32)","rgba(139,92,246,0.18)","#a78bfa","#8b5cf6","#d946ef","#8b5cf6","#ffffff","linear-gradient(135deg,#7c3aed,#ec4899)","#a78bfa","#8b8ba7","rgba(139,92,246,0.45)"],
+["amber","Amber Fogo","Conversão","#1a0f0a","#211408","#fffbeb","#fdba74","#231508","rgba(251,146,60,0.30)","rgba(251,146,60,0.16)","#fb923c","#f59e0b","#f97316","#f97316","#ffffff","linear-gradient(135deg,#f59e0b,#ef4444)","#fb923c","#9a8472","rgba(251,146,60,0.4)"],
+["ice","Ice Clean","Minimal","#ffffff","#f4f4f5","#09090b","#71717a","#ffffff","rgba(0,0,0,0.10)","#09090b","#fafafa","#27272a","#52525b","#09090b","#ffffff","linear-gradient(135deg,#18181b,#3f3f46)","#09090b","#a1a1aa","rgba(0,0,0,0.15)"],
+["rose","Rose Pink","Feminino","#1a0a12","#24101c","#fdf2f8","#f0abfc","#2a1421","rgba(232,121,249,0.30)","rgba(236,72,153,0.16)","#f472b6","#ec4899","#f43f5e","#ec4899","#ffffff","linear-gradient(135deg,#ec4899,#e879f9)","#f472b6","#9d7a8d","rgba(236,72,153,0.4)"],
+["midnight","Midnight Blue","Tech","#0a0f1a","#101a2a","#eff6ff","#93c5fd","#111e32","rgba(96,165,250,0.30)","rgba(59,130,246,0.16)","#60a5fa","#3b82f6","#22d3ee","#3b82f6","#ffffff","linear-gradient(135deg,#2563eb,#06b6d4)","#60a5fa","#7a8aa0","rgba(59,130,246,0.4)"]
+].map(r=>{const o={id:r[0],name:r[1],label:r[2]};K.forEach((k,i)=>o[k]=r[i+3]);return o});
+const T=id=>THEMES.find(t=>t.id===id)||THEMES[0];
+
+/* ===== DADOS PADRÃO ===== */
+const DEF={tema:"emerald",nome:"HDMICRO LOJA",slogan:"Ofertas Relâmpago Rio Preto",whatsapp:"17999999999",insta:"hdmicro.loja",tiktok:"hdmicro.loja",cidade:"São José do Rio Preto",
+aviso:"Oferta relâmpago • consulte a disponibilidade",
+produtos:[
+{nome:"Gabinete Gamer RGB Mid Tower",de:"399",por:"247",msg:"Oi! Quero o Gabinete Gamer por R$247 no PIX - ainda está disponível?",foto:null},
+{nome:"Kit Teclado + Mouse Gamer",de:"189",por:"97",msg:"Quero o Kit Teclado+Mouse por R$97! Como faço pra pagar?",foto:null},
+{nome:"Headset RGB 7.1 Pro",de:"229",por:"129",msg:"Esse Headset RGB por R$129 ainda tem? Quero no PIX!",foto:null}]};
+
+/* ===== RENDERIZAÇÃO DA LOJA (usada no preview, no link e no HTML baixado) ===== */
+const STORE_CSS=`*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.page{max-width:520px;margin:0 auto;padding:16px}
+.st{background:radial-gradient(120% 120% at 0 0,var(--bg2),var(--bg) 55%);color:var(--tx);border:1px solid var(--bd);border-radius:22px;overflow:hidden}
+.st .bar{height:3px;background:linear-gradient(90deg,var(--g1),var(--g2))}
+.st .in{padding:20px}
+.st .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.st .lg{display:flex;gap:8px;align-items:center;min-width:0}
+.st .av,.st .bdg{background:var(--bb);color:var(--bt);border:1px solid var(--bd);font-weight:900}
+.st .av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:11px;flex:none}
+.st .bdg{border-radius:999px;padding:4px 10px;font-size:10px;letter-spacing:.1em;flex:none}
+.st .nm{font-size:14px;font-weight:700}
+.st .sb{font-size:11px;color:var(--mu);margin-top:3px}
+.st .al{margin-top:18px;background:var(--alb);border:1px solid var(--albd);color:var(--mu);border-radius:12px;padding:10px 12px;font-size:12px;display:flex;gap:8px;align-items:center}
+.st .dot{width:8px;height:8px;border-radius:50%;background:var(--pr);flex:none}
+.st .gr{margin-top:18px;display:grid;gap:12px}
+.st .pc{position:relative;display:flex;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px;box-shadow:var(--sh)}
+.st .im{width:72px;height:72px;border-radius:12px;background:var(--thb);border:1px solid var(--bd);overflow:hidden;display:grid;place-items:center;flex:none;font-size:20px}
+.st .im img{width:100%;height:100%;object-fit:cover}
+.st .bx{flex:1;min-width:0}
+.st .pn{font-size:13px;font-weight:600;line-height:1.25}
+.st .pp{margin-top:5px;display:flex;gap:8px;align-items:baseline}
+.st .pp s{font-size:12px;color:var(--de)}
+.st .pp b{font-size:15px;font-weight:900;color:var(--pr)}
+.st .pp small{font-size:11px;opacity:.8}
+.st .ac{margin-top:10px;display:flex;gap:8px}
+.st .zap{flex:1;height:32px;border-radius:999px;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:.04em;text-decoration:none;background:var(--zap);color:var(--zt);box-shadow:0 8px 20px var(--rg)}
+.st .ig{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--ig);color:#fff;text-decoration:none;font-size:11px;font-weight:800}
+.st .tk{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#111;border:1px solid var(--bd);color:#fff;text-decoration:none;font-size:11px;font-weight:800}
+.st .off{position:absolute;top:-8px;right:-8px;background:var(--zap);color:var(--zt);border-radius:999px;padding:4px 8px;font-size:9px;font-weight:900}
+.st .ft{margin-top:18px;background:var(--ftb);border:1px dashed var(--bd);border-radius:14px;padding:12px;display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--ftt)}
+.st .ft b{color:var(--ftx)}
+.cr{text-align:center;padding:16px;font-size:10px;letter-spacing:.1em;opacity:.5}
+.cr a{color:inherit}`;
+
+function themeVars(t){
+  const L=t.id==="ice";
+  return K.map(k=>`--${k}:${t[k]}`).join(";")+
+    `;--alb:${L?"#f4f4f5":"rgba(255,255,255,.06)"};--albd:${L?"rgba(0,0,0,.08)":"rgba(255,255,255,.08)"}`+
+    `;--thb:${L?"#fafafa":"#0a0a0b"};--ftb:${L?"#09090b":"rgba(255,255,255,.06)"};--ftt:${L?"#fafafa":t.mu};--ftx:${L?"#fafafa":t.tx}`+
+    `;--sh:${L?"0 4px 24px rgba(0,0,0,.06)":"0 10px 30px rgba(0,0,0,.3)"}`;
+}
+
+function produtoHTML(p,d){
+  const nome=p.nome||"Produto";
+  const wa=`https://wa.me/55${digits(d.whatsapp)}?text=${encodeURIComponent((p.msg||"Oi! Quero "+nome)+" ("+nome+")")}`;
+  const de=+p.de,por=+p.por;
+  const off=de>por&&por>0?Math.round((1-por/de)*100):0;
+  const sem=digits(d.whatsapp)?"":" data-sem=\"1\"";
+  const ig=d.insta?`<a class="ig" href="https://instagram.com/${encodeURIComponent(d.insta)}" target="_blank" rel="noopener noreferrer">IG</a>`:"";
+  const tk=d.tiktok?`<a class="tk" href="https://www.tiktok.com/@${encodeURIComponent(d.tiktok)}" target="_blank" rel="noopener noreferrer">TT</a>`:"";
+  return `<div class="pc">${off?`<div class="off">-${off}% OFF</div>`:""}
+<div class="im">${p.foto?`<img src="${esc(p.foto)}" alt="${esc(nome)}">`:"📦"}</div>
+<div class="bx"><div class="pn">${esc(nome)}</div>
+<div class="pp">${p.de?`<s>R$${esc(p.de)}</s>`:""}<b>R$${esc(p.por||"0")} <small>no PIX</small></b></div>
+<div class="ac"><a class="zap" href="${esc(wa)}"${sem} target="_blank" rel="noopener noreferrer">1 CLIQUE ZAP</a>${ig}${tk}</div></div></div>`;
+}
+
+function lojaHTML(d,t){
+  return `<div class="st" style="${themeVars(t)}"><div class="bar"></div><div class="in">
+<div class="hd"><div class="lg"><div class="av">${esc((d.nome||"LO").slice(0,2).toUpperCase())}</div>
+<div style="min-width:0"><div class="nm">${esc(d.nome||"Sua Loja")}</div>
+<div class="sb">${d.cidade?"📍 "+esc(d.cidade)+" • ":""}${esc(d.slogan||"Ofertas Relâmpago")}</div></div></div>
+<div class="bdg">AO VIVO</div></div>
+${d.aviso?`<div class="al"><span class="dot"></span>${esc(d.aviso)}</div>`:""}
+<div class="gr">${d.produtos.map(p=>produtoHTML(p,d)).join("")}</div>
+<div class="ft"><span>Compra 100% no WhatsApp • sem cadastro</span><b>Entrega em ${esc(d.cidade||"sua cidade")} 🚚</b></div>
+</div></div>`;
+}
+
+function paginaCompleta(d,t){
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(d.nome)} - ${esc(d.slogan)}</title>
+<style>${STORE_CSS}</style>
+</head>
+<body style="background:${t.bg}">
+<div class="page">${lojaHTML(d,t)}<p class="cr" style="color:${t.tx}">MINILOJA RELÂMPAGO • HDMICRO LOJA</p></div>
+</body>
+</html>`;
+}
+
+/* ===== MODO LOJA: quando o link tem #loja=..., mostra só a loja ===== */
+function mostraLoja(o){
+  const t=T(o.t);
+  document.head.insertAdjacentHTML("beforeend","<style>"+STORE_CSS+"</style>");
+  document.title=(o.d.nome||"Loja")+" - "+(o.d.slogan||"");
+  document.body.style.background=t.bg;
+  document.body.innerHTML=`<div class="page">${lojaHTML(o.d,t)}<p class="cr" style="color:${t.tx}"><a href="/">Criar a minha miniloja</a></p></div>`;
+}
+/* Loja publicada: endereço /nome-da-loja */
+const caminho=location.pathname.replace(/^\/+|\/+$/g,"");
+if(SERVER&&caminho&&!caminho.includes("/")&&!caminho.includes(".")){
+  document.body.innerHTML='<p style="padding:40px;text-align:center;color:#a1a1aa">Carregando loja…</p>';
+  fetch("/api/loja/"+encodeURIComponent(caminho)).then(r=>r.json()).then(o=>{
+    if(o&&o.d)mostraLoja(o);
+    else document.body.innerHTML='<p style="padding:40px;text-align:center;color:#a1a1aa">Loja não encontrada. <a href="/" style="color:#34d399">Ir para o início</a></p>';
+  }).catch(()=>{document.body.textContent="Não foi possível carregar a loja."});
+  return;
+}
+const hm=location.hash.match(/^#loja=(.+)$/);
+if(hm){
+  try{
+    const o=dec(hm[1]);
+    if(o&&o.d&&Array.isArray(o.d.produtos)){
+      const t=T(o.t);
+      document.head.insertAdjacentHTML("beforeend","<style>"+STORE_CSS+"</style>");
+      document.title=(o.d.nome||"Loja")+" - "+(o.d.slogan||"");
+      document.body.style.background=t.bg;
+      document.body.innerHTML=`<div class="page">${lojaHTML(o.d,t)}<p class="cr" style="color:${t.tx}"><a href="${esc(location.pathname)}">Criar a minha miniloja</a></p></div>`;
+      return;
+    }
+  }catch(e){}
+}
+
+/* ===== ESTADO (salvo neste navegador) ===== */
+const KEY="miniloja_v2";
+let S=(()=>{try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&Array.isArray(j.produtos)&&j.produtos.length)return j}catch(e){}return clone(DEF)})();
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}$("out").hidden=true}
+
+document.head.insertAdjacentHTML("beforeend","<style>"+STORE_CSS+"</style>");
+
+/* ===== AVISOS, COPIAR, IMAGEM ===== */
+let tt;
+function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>{t.hidden=true},2600)}
+async function copia(txt,btn){
+  try{await navigator.clipboard.writeText(txt)}catch(e){
+    const a=document.createElement("textarea");a.value=txt;document.body.appendChild(a);a.select();
+    try{document.execCommand("copy")}catch(_){}a.remove();
+  }
+  if(btn){const o=btn.textContent;btn.textContent="✓ Copiado!";setTimeout(()=>{btn.textContent=o},1800)}
+}
+const comprime=f=>new Promise((ok,er)=>{
+  const r=new FileReader();r.onerror=er;
+  r.onload=()=>{const im=new Image();im.onerror=er;
+    im.onload=()=>{let w=im.width,ht=im.height;const m=600;
+      if(w>ht){if(w>m){ht=ht*m/w;w=m}}else if(ht>m){w=w*m/ht;ht=m}
+      const c=document.createElement("canvas");c.width=w;c.height=ht;
+      c.getContext("2d").drawImage(im,0,0,w,ht);ok(c.toDataURL("image/jpeg",.72))};
+    im.src=r.result};
+  r.readAsDataURL(f);
+});
+
+/* ===== NAVEGAÇÃO ===== */
+/* ===== LICENÇA VITALÍCIA (código assinado, verificado no navegador) ===== */
+const PUB={"kty":"EC","crv":"P-256","x":"brR9UVjpg32UbdPWGrDJWUJdcV88CxlPvO8ZMVoBKEU","y":"qI9ONeMlrOFpwW5k5sycpyxSbSPGOxGlXj4Bi0oavRQ"};
+const LKEY="miniloja_lic";
+let LIC=null,LICCODE="";
+const unb64=s=>{s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+async function verifica(code){
+  try{
+    const p=String(code||"").replace(/\s+/g,"").split(".");
+    if(p.length!==3||p[0]!=="ML1")return null;
+    const key=await crypto.subtle.importKey("jwk",PUB,{name:"ECDSA",namedCurve:"P-256"},false,["verify"]);
+    const ok=await crypto.subtle.verify({name:"ECDSA",hash:"SHA-256"},key,unb64(p[2]),new TextEncoder().encode("ML1."+p[1]));
+    return ok?{nome:new TextDecoder().decode(unb64(p[1]))}:null;
+  }catch(e){return null}
+}
+function mostraLic(){$("licinfo").textContent=LIC?"✓ Licença vitalícia ativa — "+LIC.nome:""}
+
+async function resgata(pid,ref){
+  go("lock");$("lockmsg").textContent="Confirmando seu pagamento…";$("recheck").hidden=true;
+  try{
+    const r=await fetch("/api/licenca?payment_id="+encodeURIComponent(pid)+"&ref="+encodeURIComponent(ref||""));
+    const o=await r.json();
+    if(o.code){
+      const p=await verifica(o.code);
+      if(p){LIC=p;LICCODE=o.code;try{localStorage.setItem(LKEY,o.code)}catch(e){}mostraLic();$("lockmsg").textContent="";toast("Pagamento confirmado! Criador liberado 🎉");go("creator");return}
+    }
+    if(o.pendente){$("lockmsg").textContent="Pagamento ainda não confirmado (o PIX pode levar alguns instantes).";$("recheck").hidden=false;$("recheck").onclick=()=>resgata(pid,ref);return}
+    $("lockmsg").textContent=o.erro||"Não consegui confirmar o pagamento. Se você pagou, fale com o vendedor.";
+  }catch(e){$("lockmsg").textContent="Sem conexão. Tente novamente."}
+}
+
+function go(v){
+  if(v==="creator"&&!LIC)v="lock";
+  $("home").hidden=v!=="home";$("lock").hidden=v!=="lock";$("creator").hidden=v!=="creator";
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.go===(v==="lock"?"creator":v)));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("[data-go]").forEach(b=>{b.onclick=()=>go(b.dataset.go)});
+
+/* ===== INÍCIO ===== */
+$("pix").textContent=CFG.pix;
+$("cpix").onclick=()=>copia(CFG.pix,$("cpix"));
+$("cpix2").onclick=()=>copia(CFG.pix,$("cpix2"));
+
+/* ===== TELA DE BLOQUEIO ===== */
+(()=>{
+  const via=[CFG.zap?"pelo WhatsApp":"",CFG.email?"pelo e-mail "+CFG.email:""].filter(Boolean).join(" ou ")||"para quem vendeu o app";
+  $("contato").textContent=via;
+  ["mp","mp2"].forEach(id=>{const a=$(id);if(CFG.pagar)a.href=CFG.pagar;else a.hidden=true});
+  if(digits(CFG.zap)){
+    const z=$("zaplink");
+    z.href="https://wa.me/55"+digits(CFG.zap)+"?text="+encodeURIComponent("Olá! Paguei o Miniloja Relâmpago e quero meu código de acesso.");
+    z.hidden=false;
+  }
+})();
+$("unlock").onclick=async()=>{
+  const code=$("code").value.trim();
+  if(!code){$("lockmsg").textContent="Cole o código que você recebeu.";return}
+  const p=await verifica(code);
+  if(!p){$("lockmsg").textContent="Código inválido. Confira se copiou o código inteiro, sem cortar o final.";return}
+  LIC=p;LICCODE=code;try{localStorage.setItem(LKEY,code)}catch(e){}
+  $("lockmsg").textContent="";$("code").value="";mostraLic();toast("Criador liberado! 🎉");go("creator");
+};
+$("demo").innerHTML=lojaHTML(DEF,T("emerald"));
+
+/* ===== CRIADOR: moldura, campos, produtos ===== */
+function renderPV(){$("pv").innerHTML=lojaHTML(S,T(S.tema));$("pvname").textContent=T(S.tema).name.toUpperCase()}
+
+function renderThemes(){
+  $("themes").innerHTML=THEMES.map(t=>`<button class="tm${t.id===S.tema?" on":""}" data-t="${t.id}">
+<i style="background:linear-gradient(135deg,${t.g1},${t.g2})"></i><div><b>${t.name}</b><span>${t.label}</span></div></button>`).join("");
+}
+$("themes").addEventListener("click",e=>{
+  const b=e.target.closest("[data-t]");if(!b)return;
+  S.tema=b.dataset.t;persist();renderThemes();renderPV();
+});
+
+$("fields").addEventListener("input",e=>{
+  const f=e.target.dataset.f;if(!f)return;
+  let v=e.target.value;
+  if(f==="whatsapp")v=digits(v);
+  if(f==="insta"||f==="tiktok")v=v.replace(/[@\s]/g,"");
+  if(v!==e.target.value)e.target.value=v;
+  S[f]=v;persist();renderPV();
+});
+
+function renderProds(){
+  $("prods").innerHTML=S.produtos.map((p,i)=>`<div class="pb" data-i="${i}">
+<div class="ph"><b>PRODUTO ${i+1}</b>${S.produtos.length>1?`<button class="x" data-act="del">Remover</button>`:""}</div>
+<input data-k="nome" placeholder="Nome do produto" value="${esc(p.nome)}">
+<div class="r2"><input data-k="de" inputmode="numeric" placeholder="Preço DE (R$)" value="${esc(p.de)}">
+<input data-k="por" inputmode="numeric" placeholder="Preço POR no PIX (R$)" value="${esc(p.por)}"></div>
+<input data-k="msg" placeholder="Mensagem pronta pro WhatsApp" value="${esc(p.msg)}">
+<div class="fo"><div class="pi">${p.foto?`<img src="${esc(p.foto)}" alt="">`:"📷"}</div>
+<button class="btn gh sm" data-act="foto">${p.foto?"Trocar foto":"Adicionar foto (opcional)"}</button>
+${p.foto?`<button class="btn gh sm" data-act="rmfoto">✕</button>`:""}
+<input type="file" accept="image/*" hidden></div></div>`).join("");
+  $("add").hidden=S.produtos.length>=MAX;
+}
+
+const prods=$("prods");
+prods.addEventListener("input",e=>{
+  const k=e.target.dataset.k;if(!k)return;
+  const i=+e.target.closest(".pb").dataset.i;
+  let v=e.target.value;
+  if(k==="de"||k==="por"){v=digits(v);if(v!==e.target.value)e.target.value=v}
+  S.produtos[i][k]=v;persist();renderPV();
+});
+prods.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const box=b.closest(".pb"),i=+box.dataset.i,a=b.dataset.act;
+  if(a==="del"){S.produtos.splice(i,1);persist();renderProds();renderPV()}
+  if(a==="foto")box.querySelector("input[type=file]").click();
+  if(a==="rmfoto"){S.produtos[i].foto=null;persist();renderProds();renderPV()}
+});
+prods.addEventListener("change",async e=>{
+  if(e.target.type!=="file")return;
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  const i=+e.target.closest(".pb").dataset.i;
+  try{S.produtos[i].foto=await comprime(f);persist();renderProds();renderPV()}
+  catch(_){toast("Não consegui ler essa imagem")}
+});
+$("add").onclick=()=>{
+  if(S.produtos.length>=MAX)return;
+  S.produtos.push({nome:"",de:"",por:"",msg:"",foto:null});
+  persist();renderProds();renderPV();
+};
+
+/* ===== GERAR, COPIAR, BAIXAR ===== */
+$("gen").onclick=async()=>{
+  if(digits(S.whatsapp).length<10){toast("Preencha o WhatsApp com DDD (10 ou 11 números)");$("f-whatsapp").focus();return}
+  if(!S.produtos.some(p=>p.nome.trim())){toast("Dê nome a pelo menos um produto");return}
+  if(SERVER){
+    $("gen").disabled=true;
+    try{
+      const r=await fetch("/api/publicar",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:LICCODE,t:S.tema,d:S,slug:slug(S.nome)})});
+      const o=await r.json();
+      if(!o.url){toast(o.erro||"Não consegui publicar");$("gen").disabled=false;return}
+      $("lnk").textContent=o.url;
+      $("note").textContent="Loja publicada! Este link é permanente. Para atualizar, edite e publique de novo com o mesmo nome. Pode colocar na bio do TikTok e do Instagram.";
+      $("out").hidden=false;$("out").scrollIntoView({behavior:"smooth",block:"center"});
+      $("cp").onclick=()=>copia(o.url,$("cp"));
+    }catch(e){toast("Sem conexão com o servidor")}
+    $("gen").disabled=false;return;
+  }
+  const leve=Object.assign({},S,{produtos:S.produtos.map(p=>Object.assign({},p,{foto:null}))});
+  const link=location.href.split("#")[0]+"#loja="+enc({t:S.tema,d:leve});
+  const temFoto=S.produtos.some(p=>p.foto);
+  let n="O link carrega os dados da loja dentro dele, sem servidor.";
+  if(temFoto)n+=" As fotos não vão no link (ficaria enorme): para ter fotos use Baixar HTML e hospede o arquivo.";
+  if(location.protocol==="file:")n+=" Atenção: você abriu este arquivo direto do computador, então o link só funciona para outras pessoas depois que este arquivo for hospedado (GitHub Pages, Cloudflare...). Até lá, use Baixar HTML.";
+  $("lnk").textContent=link;$("note").textContent=n;$("out").hidden=false;
+  $("out").scrollIntoView({behavior:"smooth",block:"center"});
+  $("cp").onclick=()=>copia(link,$("cp"));
+};
+$("dl").onclick=()=>{
+  const blob=new Blob([paginaCompleta(S,T(S.tema))],{type:"text/html"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=slug(S.nome)+".html";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+$("reset").onclick=()=>{
+  if(!confirm("Voltar tudo ao modelo inicial? Seus dados atuais serão apagados."))return;
+  S=clone(DEF);persist();initCriador();
+};
+
+/* ===== INÍCIO DO CRIADOR ===== */
+function initCriador(){
+  document.querySelectorAll("[data-f]").forEach(i=>{i.value=S[i.dataset.f]||""});
+  renderThemes();renderProds();renderPV();$("out").hidden=true;
+}
+/* ===== CLIQUES NAS LOJAS (demo e preview) ===== */
+document.addEventListener("click",e=>{
+  const a=e.target.closest(".zap,.ig,.tk");if(!a)return;
+  if(a.closest("#demo")){e.preventDefault();toast("Isto é só uma demonstração");return}
+  if(a.dataset.sem){e.preventDefault();toast("Preencha seu WhatsApp para testar")}
+});
+
+initCriador();
+try{const sv=localStorage.getItem(LKEY);if(sv)verifica(sv).then(p=>{if(p){LIC=p;LICCODE=sv;mostraLic()}})}catch(e){}
+/* ===== MODO SERVIDOR: pagamento automático ===== */
+if(SERVER){
+  $("gen").textContent="PUBLICAR MINHA MINILOJA ⚡";
+  ["mp","mp2"].forEach(id=>{
+    const a=$(id);a.removeAttribute("target");
+    a.onclick=async e=>{
+      e.preventDefault();
+      try{
+        const o=await (await fetch("/api/comprar",{method:"POST"})).json();
+        if(!o.url)throw 0;
+        try{localStorage.setItem("miniloja_ref",o.ref)}catch(_){}
+        location.href=o.url;
+      }catch(_){toast("Não consegui abrir o pagamento. Tente de novo.")}
+    };
+  });
+  const q=new URLSearchParams(location.search);
+  const pid=q.get("payment_id")||q.get("collection_id");
+  if(pid){
+    let ref=q.get("external_reference");
+    try{ref=ref||localStorage.getItem("miniloja_ref")}catch(_){}
+    history.replaceState(null,"",location.pathname);
+    resgata(pid,ref);
+  }
+}
+})();
+</script>
+</body>
+</html>

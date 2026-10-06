@@ -1,0 +1,14 @@
+{
+  "name": "miniloja",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "kv_namespaces": [
+    { "binding": "LOJAS", "id": "COLE_AQUI_O_ID_DO_KV" }
+  ]
+}

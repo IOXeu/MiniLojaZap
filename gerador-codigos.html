@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerador de códigos — Miniloja (PRIVADO)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{background:#0a0a0b;color:#f4f4f5;padding:24px 16px}
+.w{max-width:620px;margin:0 auto}
+h1{font-size:24px;font-weight:900}
+.warn{margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.35);color:#fca5a5;font-size:12px;line-height:1.6}
+.card{background:#18181b;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:20px;margin-top:16px}
+label{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;color:#a1a1aa}
+input,textarea{width:100%;margin-top:6px;background:#09090b;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;font:inherit;font-size:13px;color:inherit;outline:0}
+textarea{height:110px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;word-break:break-all}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button,a.b{height:40px;padding:0 16px;border-radius:999px;border:0;font:inherit;font-size:12px;font-weight:800;cursor:pointer;display:inline-grid;place-items:center;text-decoration:none;background:#fff;color:#000}
+button.ok{background:#34d399}
+.g{background:rgba(255,255,255,.07)!important;color:#fff!important;border:1px solid rgba(255,255,255,.1)!important}
+.h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:12px}
+.h small{color:#a1a1aa;display:block;margin-top:2px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>Gerador de códigos</h1>
+  <div class="warn">⚠ ARQUIVO PRIVADO. Ele contém a chave que cria os códigos. Nunca envie, publique nem hospede este arquivo: use só no seu computador ou celular e guarde uma cópia segura.</div>
+
+  <div class="card">
+    <label>NOME OU E-MAIL DO COMPRADOR<input id="nome" placeholder="Maria Silva" autocomplete="off"></label>
+    <div class="row"><button class="ok" id="gen">GERAR CÓDIGO</button></div>
+  </div>
+
+  <div class="card" id="res" hidden>
+    <label>CÓDIGO GERADO<textarea id="out" readonly></textarea></label>
+    <div class="row">
+      <button id="c1">Copiar código</button>
+      <button class="g" id="c2">Copiar mensagem pronta</button>
+      <a class="b g" id="zap" target="_blank" rel="noopener noreferrer">Enviar por WhatsApp</a>
+      <a class="b g" id="mail">Enviar por e-mail</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <label>HISTÓRICO (guardado só neste aparelho)</label>
+    <div id="hist" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+"use strict";
+const PRIV={"kty":"EC","crv":"P-256","x":"brR9UVjpg32UbdPWGrDJWUJdcV88CxlPvO8ZMVoBKEU","y":"qI9ONeMlrOFpwW5k5sycpyxSbSPGOxGlXj4Bi0oavRQ","d":"XwmD-7AEvKWVngV5qw7p3BIgT4bG1glJ6VLIFd4lJpg"};
+const $=id=>document.getElementById(id);
+const te=new TextEncoder();
+const b64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const HK="ml_hist";
+const lerH=()=>{try{return JSON.parse(localStorage.getItem(HK))||[]}catch(e){return []}};
+const salvaH=h=>{try{localStorage.setItem(HK,JSON.stringify(h))}catch(e){}};
+
+async function gerar(nome){
+  const id=Array.from(crypto.getRandomValues(new Uint8Array(3)),b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();
+  const p=b64(te.encode((nome+" #"+id).trim()));
+  const key=await crypto.subtle.importKey("jwk",PRIV,{name:"ECDSA",namedCurve:"P-256"},false,["sign"]);
+  const sig=await crypto.subtle.sign({name:"ECDSA",hash:"SHA-256"},key,te.encode("ML1."+p));
+  return "ML1."+p+"."+b64(sig);
+}
+const msg=c=>"Seu código de acesso vitalício ao Miniloja Relâmpago:\n\n"+c+"\n\nComo usar: abra o app, clique em CRIADOR, cole o código e toque em DESBLOQUEAR.";
+async function copia(t,btn){
+  try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(_){}a.remove()}
+  if(btn){const o=btn.textContent;btn.textContent="✓ Copiado!";setTimeout(()=>{btn.textContent=o},1500)}
+}
+function mostra(c){
+  $("out").value=c;$("res").hidden=false;
+  $("c1").onclick=()=>copia(c,$("c1"));
+  $("c2").onclick=()=>copia(msg(c),$("c2"));
+  $("zap").href="https://wa.me/?text="+encodeURIComponent(msg(c));
+  $("mail").href="mailto:?subject="+encodeURIComponent("Seu código de acesso - Miniloja Relâmpago")+"&body="+encodeURIComponent(msg(c));
+}
+function hist(){
+  const h=lerH(),box=$("hist");box.innerHTML="";
+  if(!h.length){box.textContent="Nenhum código gerado ainda.";box.style.color="#a1a1aa";box.style.fontSize="12px";return}
+  h.forEach(x=>{
+    const d=document.createElement("div");d.className="h";
+    const l=document.createElement("div");l.textContent=x.nome;
+    const s=document.createElement("small");s.textContent=x.data;l.appendChild(s);
+    const b=document.createElement("button");b.className="g";b.textContent="Ver / copiar";
+    b.onclick=()=>{mostra(x.code);window.scrollTo(0,0)};
+    d.appendChild(l);d.appendChild(b);box.appendChild(d);
+  });
+}
+$("gen").onclick=async()=>{
+  const nome=$("nome").value.trim();
+  if(!nome){alert("Digite o nome ou e-mail do comprador.");return}
+  try{
+    const code=await gerar(nome);
+    const h=lerH();h.unshift({nome,code,data:new Date().toLocaleString("pt-BR")});salvaH(h);
+    mostra(code);hist();$("nome").value="";
+  }catch(e){alert("Não consegui gerar o código neste navegador. Tente no Chrome ou Edge.")}
+};
+hist();
+})();
+</script>
+</body>
+</html>
